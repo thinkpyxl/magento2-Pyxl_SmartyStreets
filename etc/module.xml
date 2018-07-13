@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @category    Pyxl
+ * @package     Pyxl_SmartyStreets
+ * @copyright   © Pyxl, Inc. All rights reserved.
+ * @license     See LICENSE.txt for license details.
+ * @author      Joel Rainwater <jrainwater@pyxl.com>
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
+    <module name="Pyxl_SmartyStreets" setup_version="1.0.0">
+        <sequence>
+            <module name="Magento_Customer" />
+            <module name="Pyxl_Core" />
+        </sequence>
+    </module>
+</config>
