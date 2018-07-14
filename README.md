@@ -29,7 +29,10 @@ Navigate to **Stores** -> **Configuration** -> **Pyxl** ->  **SmartyStreets** to
 this module and enter your Auth ID and Token. 
 
 ## Documentation
-SmartyStreets PHP SDK Documentation can be found [here](https://smartystreets.com/docs/sdk/php) 
+SmartyStreets PHP SDK Documentation can be found [here](https://smartystreets.com/docs/sdk/php)
+
+## TODO
+* Provide a selection list of valid addresses if more than 1 candidate returned. 
 
 ## Authors
 * Joel Rainwater
