@@ -21,6 +21,7 @@ use Magento\Framework\Exception\InputException;
 use Magento\Directory\Model\ResourceModel\Region\CollectionFactory;
 use Magento\Customer\Api\Data\RegionInterfaceFactory;
 use Pyxl\SmartyStreets\Model\Validator;
+use Pyxl\SmartyStreets\Helper\Config;
 
 class SaveAddressPlugin
 {
@@ -37,6 +38,10 @@ class SaveAddressPlugin
      * @var \Magento\Customer\Api\Data\RegionInterfaceFactory
      */
     private $regionDataFactory;
+    /**
+     * @var Config
+     */
+    private $config;
 
     /**
      * SaveAddressPlugin constructor.
@@ -44,16 +49,19 @@ class SaveAddressPlugin
      * @param Validator $validator
      * @param CollectionFactory $regionCollectionFactory
      * @param RegionInterfaceFactory $regionDataFactory
+     * @param Config $config
      */
     public function __construct(
         Validator $validator,
         CollectionFactory $regionCollectionFactory,
-        RegionInterfaceFactory $regionDataFactory
+        RegionInterfaceFactory $regionDataFactory,
+        Config $config
     )
     {
         $this->validator = $validator;
         $this->regionCollectionFactory = $regionCollectionFactory;
         $this->regionDataFactory = $regionDataFactory;
+        $this->config = $config;
     }
 
     /**
@@ -75,40 +83,42 @@ class SaveAddressPlugin
         AddressInterface $address
     ) 
     {
-        $results = $this->validator->validate($address);
-        if ($results['valid']) {
-            $firstCandidate = $results['candidates'][0];
-            $street = $address->getStreet();
+        if ($this->config->isModuleEnabled()) {
+            $results = $this->validator->validate($address);
+            if ($results['valid']) {
+                $firstCandidate = $results['candidates'][0];
+                $street = $address->getStreet();
 
-            // US and Intl have different Candidate models
-            if ($address->getCountryId() == "US") {
-                /** @var \SmartyStreets\PhpSdk\US_Street\Candidate $firstCandidate */
-                $street[0] = $firstCandidate->getDeliveryLine1();
-                $street[1] = $firstCandidate->getDeliveryLine2();
-                $components = $firstCandidate->getComponents();
-                $address->setPostcode($components->getZipcode());
-                $address->setCity($components->getCityName());
-                if ($address->getRegion()->getRegionCode() !== $components->getStateAbbreviation()) {
-                    $this->setRegion($components->getStateAbbreviation(), $address);
+                // US and Intl have different Candidate models
+                if ($address->getCountryId() == "US") {
+                    /** @var \SmartyStreets\PhpSdk\US_Street\Candidate $firstCandidate */
+                    $street[0] = $firstCandidate->getDeliveryLine1();
+                    $street[1] = $firstCandidate->getDeliveryLine2();
+                    $components = $firstCandidate->getComponents();
+                    $address->setPostcode($components->getZipcode());
+                    $address->setCity($components->getCityName());
+                    if ($address->getRegion()->getRegionCode() !== $components->getStateAbbreviation()) {
+                        $this->setRegion($components->getStateAbbreviation(), $address);
+                    }
+                } else {
+                    /** @var \SmartyStreets\PhpSdk\International_Street\Candidate $firstCandidate */
+                    $street[0] = $firstCandidate->getAddress1();
+                    $street[1] = $firstCandidate->getAddress2();
+                    $street[2] = $firstCandidate->getAddress3();
+                    $components = $firstCandidate->getComponents();
+                    $address->setPostcode($components->getPostalCode());
+                    $address->setCity($components->getLocality());
+                    if ($address->getRegion()->getRegionCode() !== $components->getAdministrativeArea()) {
+                        $this->setRegion($components->getAdministrativeArea(), $address);
+                    }
                 }
+                $address->setStreet($street);
+
             } else {
-                /** @var \SmartyStreets\PhpSdk\International_Street\Candidate $firstCandidate */
-                $street[0] = $firstCandidate->getAddress1();
-                $street[1] = $firstCandidate->getAddress2();
-                $street[2] = $firstCandidate->getAddress3();
-                $components = $firstCandidate->getComponents();
-                $address->setPostcode($components->getPostalCode());
-                $address->setCity($components->getLocality());
-                if ($address->getRegion()->getRegionCode() !== $components->getAdministrativeArea()) {
-                    $this->setRegion($components->getAdministrativeArea(), $address);
-                }
+                throw new InputException($results['message']);
             }
-            $address->setStreet($street);
-
-            return $proceed($address);
-        } else {
-            throw new InputException($results['message']);
         }
+        return $proceed($address);
     }
 
     /**
