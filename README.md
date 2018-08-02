@@ -18,7 +18,7 @@ If you **don't** have Pyxl_Core installed already run this first:
 Then require this package:
 
     composer config repositories.pyxl-smartystreets git https://github.com/thinkpyxl/magento2-Pyxl_SmartyStreets.git
-    composer require pyxl/module-smartystreets:^1.0.2
+    composer require pyxl/module-smartystreets:^1.0.3
     bin/magento module:enable Pyxl_SmartyStreets
     bin/magento setup:upgrade
     bin/magento cache:clean 
@@ -29,7 +29,7 @@ Navigate to **Stores** -> **Configuration** -> **Pyxl** ->  **SmartyStreets**
 
 There are two features you can manage. 
 
-Under **Settings** you can enable/disable the address validation feature and provide your Auth Token and ID.
+Under **Validation** you can enable/disable the address validation feature and provide your Auth Token and ID.
 
 Under **Autocomplete** you can enable/disable the autocomplete feature and include your website key. 
 

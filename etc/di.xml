@@ -19,4 +19,13 @@
     <type name="Magento\Customer\Api\AddressRepositoryInterface">
         <plugin name="ssValidateAddress" type="Pyxl\SmartyStreets\Plugin\Customer\SaveAddressPlugin" sortOrder="5" />
     </type>
+    <type name="Magento\Config\Model\Config\TypePool">
+        <arguments>
+            <argument name="sensitive" xsi:type="array">
+                <item name="smartystreets/validation/auth_id" xsi:type="string">1</item>
+                <item name="smartystreets/validation/auth_token" xsi:type="string">1</item>
+                <item name="smartystreets/autocomplete/website_key" xsi:type="string">1</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

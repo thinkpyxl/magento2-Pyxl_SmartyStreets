@@ -22,7 +22,7 @@ use Magento\Store\Model\ScopeInterface;
 class Config extends AbstractHelper
 {
 
-    const XML_PATH_SMARTYSTREETS_SETTINGS       = 'smartystreets/settings';
+    const XML_PATH_SMARTYSTREETS_VALIDATION     = 'smartystreets/validation';
     const XML_PATH_SMARTYSTREETS_ENABLED        = 'enabled';
     const XML_PATH_SMARTYSTREETS_AUTH_ID        = 'auth_id';
     const XML_PATH_SMARTYSTREETS_AUTH_TOKEN     = 'auth_token';
@@ -32,7 +32,7 @@ class Config extends AbstractHelper
     /**
      * @var array
      */
-    private $settings = [];
+    private $validation = [];
 
     /**
      * @var array
@@ -40,7 +40,7 @@ class Config extends AbstractHelper
     private $autocomplete = [];
 
     /**
-     * Get all settings fields from configuration as array
+     * Get all validation fields from configuration as array
      * Optionally get value from single field
      *
      * @param null|string $store
@@ -49,23 +49,23 @@ class Config extends AbstractHelper
      *
      * @return array|string|null
      */
-    private function getSettings(
+    private function getValidationValue(
         $store = null,
         $scopeType = ScopeInterface::SCOPE_STORE,
         $field = null
     )
     {
-        if (empty($this->settings)) {
-            $this->settings = $this->scopeConfig->getValue(
-                $this::XML_PATH_SMARTYSTREETS_SETTINGS,
+        if (empty($this->validation)) {
+            $this->validation = $this->scopeConfig->getValue(
+                $this::XML_PATH_SMARTYSTREETS_VALIDATION,
                 $scopeType,
                 $store
             );
         }
         if ($field) {
-            return isset($this->settings[$field]) ? $this->settings[$field] : null;
+            return isset($this->validation[$field]) ? $this->validation[$field] : null;
         }
-        return $this->settings;
+        return $this->validation;
     }
 
     /**
@@ -107,7 +107,7 @@ class Config extends AbstractHelper
      */
     public function isModuleEnabled($store = null, $scopeType = ScopeInterface::SCOPE_STORE)
     {
-        return $this->getSettings($store, $scopeType, $this::XML_PATH_SMARTYSTREETS_ENABLED);
+        return $this->getValidationValue($store, $scopeType, $this::XML_PATH_SMARTYSTREETS_ENABLED);
     }
 
     /**
@@ -120,7 +120,7 @@ class Config extends AbstractHelper
      */
     public function getAuthId($store = null, $scopeType = ScopeInterface::SCOPE_STORE)
     {
-        return $this->getSettings($store, $scopeType, $this::XML_PATH_SMARTYSTREETS_AUTH_ID);
+        return $this->getValidationValue($store, $scopeType, $this::XML_PATH_SMARTYSTREETS_AUTH_ID);
     }
 
     /**
@@ -133,7 +133,7 @@ class Config extends AbstractHelper
      */
     public function getAuthToken($store = null, $scopeType = ScopeInterface::SCOPE_STORE)
     {
-        return $this->getSettings($store, $scopeType, $this::XML_PATH_SMARTYSTREETS_AUTH_TOKEN);
+        return $this->getValidationValue($store, $scopeType, $this::XML_PATH_SMARTYSTREETS_AUTH_TOKEN);
     }
 
     /**
