@@ -22,15 +22,22 @@ use Magento\Store\Model\ScopeInterface;
 class Config extends AbstractHelper
 {
 
-    const XML_PATH_SMARTYSTREETS_SETTINGS   = 'smartystreets/settings';
-    const XML_PATH_SMARTYSTREETS_ENABLED    = 'enabled';
-    const XML_PATH_SMARTYSTREETS_AUTH_ID    = 'auth_id';
-    const XML_PATH_SMARTYSTREETS_AUTH_TOKEN = 'auth_token';
+    const XML_PATH_SMARTYSTREETS_SETTINGS       = 'smartystreets/settings';
+    const XML_PATH_SMARTYSTREETS_ENABLED        = 'enabled';
+    const XML_PATH_SMARTYSTREETS_AUTH_ID        = 'auth_id';
+    const XML_PATH_SMARTYSTREETS_AUTH_TOKEN     = 'auth_token';
+    const XML_PATH_SMARTYSTREETS_AUTOCOMPLETE   = 'smartystreets/autocomplete';
+    const XML_PATH_SMARTYSTREETS_SITE_KEY       = 'website_key';
 
     /**
      * @var array
      */
     private $settings = [];
+
+    /**
+     * @var array
+     */
+    private $autocomplete = [];
 
     /**
      * Get all settings fields from configuration as array
@@ -59,6 +66,35 @@ class Config extends AbstractHelper
             return isset($this->settings[$field]) ? $this->settings[$field] : null;
         }
         return $this->settings;
+    }
+
+    /**
+     * Get all autocomplete fields from configuration as array
+     * Optionally get value from single field
+     *
+     * @param null|string $store
+     * @param string $scopeType
+     * @param string|null $field
+     *
+     * @return array|string|null
+     */
+    private function getAutocompleteValue(
+        $store = null,
+        $scopeType = ScopeInterface::SCOPE_STORE,
+        $field = null
+    )
+    {
+        if (empty($this->autocomplete)) {
+            $this->autocomplete = $this->scopeConfig->getValue(
+                $this::XML_PATH_SMARTYSTREETS_AUTOCOMPLETE,
+                $scopeType,
+                $store
+            );
+        }
+        if ($field) {
+            return isset($this->autocomplete[$field]) ? $this->autocomplete[$field] : null;
+        }
+        return $this->autocomplete;
     }
 
     /**
@@ -98,6 +134,32 @@ class Config extends AbstractHelper
     public function getAuthToken($store = null, $scopeType = ScopeInterface::SCOPE_STORE)
     {
         return $this->getSettings($store, $scopeType, $this::XML_PATH_SMARTYSTREETS_AUTH_TOKEN);
+    }
+
+    /**
+     * Return whether autocomplete is enabled
+     *
+     * @param null|string $store
+     * @param string $scopeType
+     *
+     * @return bool|null
+     */
+    public function isAutocompleteEnabled($store = null, $scopeType = ScopeInterface::SCOPE_STORE)
+    {
+        return $this->getAutocompleteValue($store, $scopeType, $this::XML_PATH_SMARTYSTREETS_ENABLED);
+    }
+
+    /**
+     * Get Website Key
+     *
+     * @param null|string $store
+     * @param string $scopeType
+     *
+     * @return string|null
+     */
+    public function getSiteKey($store = null, $scopeType = ScopeInterface::SCOPE_STORE)
+    {
+        return $this->getAutocompleteValue($store, $scopeType, $this::XML_PATH_SMARTYSTREETS_SITE_KEY);
     }
 
 }

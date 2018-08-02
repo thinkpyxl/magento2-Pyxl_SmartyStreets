@@ -39,6 +39,19 @@
                     </depends>
                 </field>
             </group>
+            <group id="autocomplete" translate="label" sortOrder="30" showInDefault="1" showInStore="1" showInWebsite="1">
+                <label>Autocomplete</label>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable SmartyStreets</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="website_key" translate="label" type="obscure" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Website Key</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+            </group>
         </section>
     </system>
 </config>

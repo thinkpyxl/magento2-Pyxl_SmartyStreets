@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="content">
+            <block class="Pyxl\SmartyStreets\Block\Address\Autocomplete"
+                   name="customer_address_autocomplete"
+                   template="Pyxl_SmartyStreets::customer/address/autocomplete.phtml"
+                   after="customer_address_edit"
+                   ifconfig="smartystreets/autocomplete/enabled"
+            />
+        </referenceContainer>
+    </body>
+</page>
