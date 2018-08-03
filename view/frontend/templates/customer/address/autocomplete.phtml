@@ -1,143 +1,15 @@
 <?php /** @var $block \Pyxl\SmartyStreets\Block\Address\Autocomplete */ ?>
 <?php if ($block->isEnabled()): ?>
-<script type="text/javascript">
-    require([
-            'jquery',
-            'SmartyStreetsSDK',
-            'jquery/ui',
-        ],
-        function ($, SmartyStreetsSDK) {
-
-            let regions = <?php echo $block->getRegions(); ?>;
-
-            /** Init SmartyStreets **/
-            //autocomplete
-            const SmartyStreetsCore = SmartyStreetsSDK.core;
-            const usAutocompleteLookup = SmartyStreetsSDK.usAutocomplete.Lookup;
-
-            // Add your credentials to a credentials object.
-            let autoCompleteCredentials = new SmartyStreetsCore.SharedCredentials('<?php echo $block->getSiteKey() ?>');
-            let autocompleteClientBuilder = new SmartyStreetsCore.ClientBuilder(autoCompleteCredentials);
-            let autocompleteClient = autocompleteClientBuilder.buildUsAutocompleteClient(); //todo add intl lookup
-
-            // validation
-            const usStreetLookup = SmartyStreetsSDK.usStreet.Lookup;
-            let validationClientBuilder = new SmartyStreetsCore.ClientBuilder(autoCompleteCredentials);
-            let validationClient = validationClientBuilder.buildUsStreetApiClient();
-
-            // Init autocomplete
-            $('#street_1')
-                .autocomplete({
-                    classes: {
-                        "ui-autocomplete": "ui-autocomplete smartystreets-autocomplete" // y no work???
-                    },
-                    source: function (request, response) {
-                        let term = request.term;
-                        lookupAddress(term, response);
-                    },
-                    select: function (event, ui) {
-                        selectAddress(ui.item.value);
-                        return false;
-                    }
-                })
-                .attr("autocomplete", "smartystreets")
-                // using this since "classes" is not working above
-                .autocomplete("widget").addClass('smartystreets-autocomplete');
-
-
-            /**
-             * Search for addresses from partial typed
-             *
-             * @param {string} partialAddress
-             * @param {function} jqueryResponse
-             */
-            function lookupAddress(partialAddress, jqueryResponse) {
-                let lookup = new usAutocompleteLookup(partialAddress);
-
-                autocompleteClient.send(lookup)
-                    .then(showResults)
-                    .catch(handleError);
-
-                /**
-                 * Display list of options for autocomplete
-                 *
-                 * @param {object} response
-                 */
-                function showResults(response) {
-                    let addresses = [];
-                    if (response.result && Array.isArray(response.result)) {
-                        addresses = $.map(response.result, function (value, key) {
-                            return {
-                                label: value.text,
-                                value: value.text
-                            }
-                        });
-                    }
-                    jqueryResponse(addresses);
-                }
-
-                /**
-                 * TODO Decide how to handle failures.
-                 *
-                 * @param {object} response
-                 */
-                function handleError(response) {
-                    console.log(response);
-                }
+<script>
+    window.autocompleteConfig = <?php echo $block->getSerializedAutocompleteConfig() ?>;
+</script>
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "Pyxl_SmartyStreets/js/autocomplete": {
+                "isCheckout": false
             }
-
-            /**
-             * Validate selected address and fill in the appropriate fields with response
-             *
-             * @param {string} address
-             */
-            function selectAddress(address) {
-                let lookup1 = new usStreetLookup();
-                lookup1.street = address;
-
-                // Send the lookup from the client and handle the response.
-                validationClient.send(lookup1)
-                    .then(handleSuccess)
-                    .catch(handleError);
-
-                /**
-                 * Fill out all appropriate fields from response components
-                 *
-                 * @param {object} response
-                 */
-                function handleSuccess(response) {
-                    response.lookups.map(function(lookup, index) {
-                        if (lookup.result.length > 0) {
-                            let result = lookup.result[0];
-                            let components = result.components;
-                            $('#street_1').val(result.deliveryLine1);
-                            $('#street_2').val(result.deliveryLine2);
-                            $('#city').val(components.cityName);
-                            $('#region').val(components.state);
-                            if (components.state in regions) {
-                                $('#region_id').val(regions[components.state]);
-                            } else {
-                                console.log("No state found");
-                                console.log(components.state);
-                                console.log(regions);
-                            }
-                            $('#zip').val(components.zipCode);
-                        }
-                    });
-
-                }
-
-                /**
-                 * TODO Decide how to handle failures.
-                 *
-                 * @param {object} response
-                 */
-                function handleError(response) {
-                    console.log("Error", response);
-                }
-            }
-
         }
-    );
+    }
 </script>
 <?php endif; ?>

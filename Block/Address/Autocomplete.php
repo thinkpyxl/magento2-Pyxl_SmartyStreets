@@ -23,7 +23,7 @@ class Autocomplete extends \Magento\Framework\View\Element\Template
     /**
      * @var \Pyxl\SmartyStreets\Helper\Config
      */
-    private $config;
+    private $configHelper;
 
     /**
      * @var \Magento\Framework\Serialize\SerializerInterface
@@ -31,40 +31,31 @@ class Autocomplete extends \Magento\Framework\View\Element\Template
     private $jsonSerializer;
 
     /**
-     * @var \Magento\Directory\Model\ResourceModel\Region\CollectionFactory
+     * @var \Pyxl\SmartyStreets\Model\AutocompleteConfigProvider
      */
-    private $regionCollectionFactory;
+    private $configProvider;
 
+    /**
+     * Autocomplete constructor.
+     *
+     * @param Template\Context $context
+     * @param \Pyxl\SmartyStreets\Helper\Config $configHelper
+     * @param \Pyxl\SmartyStreets\Model\AutocompleteConfigProvider $autocompleteConfigProvider
+     * @param \Magento\Framework\Serialize\SerializerInterface $jsonSerializer
+     * @param array $data
+     */
     public function __construct(
         Template\Context $context,
-        \Pyxl\SmartyStreets\Helper\Config $config,
+        \Pyxl\SmartyStreets\Helper\Config $configHelper,
+        \Pyxl\SmartyStreets\Model\AutocompleteConfigProvider $autocompleteConfigProvider,
         \Magento\Framework\Serialize\SerializerInterface $jsonSerializer,
-        \Magento\Directory\Model\ResourceModel\Region\CollectionFactory $regionCollectionFactory,
         array $data = []
     )
     {
-        $this->config = $config;
+        $this->configHelper = $configHelper;
         $this->jsonSerializer = $jsonSerializer;
-        $this->regionCollectionFactory = $regionCollectionFactory;
+        $this->configProvider = $autocompleteConfigProvider;
         parent::__construct( $context, $data );
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getSiteKey()
-    {
-        return $this->config->getSiteKey();
-    }
-
-    public function getAuthToken()
-    {
-        return $this->config->getAuthToken();
-    }
-
-    public function getAuthId()
-    {
-        return $this->config->getAuthId();
     }
 
     /**
@@ -72,28 +63,18 @@ class Autocomplete extends \Magento\Framework\View\Element\Template
      */
     public function isEnabled()
     {
-        return $this->config->isAutocompleteEnabled();
+        return $this->configHelper->isAutocompleteEnabled();
     }
 
     /**
-     * Get all regions to lookup ID by Code
+     * Returns serialized config data for address edit view
      *
      * @return bool|string
      */
-    public function getRegions()
+    public function getSerializedAutocompleteConfig()
     {
-        $collection = $this->regionCollectionFactory->create()->load();
-        $regions = [];
-        /** @var \Magento\Directory\Model\Region $region */
-        foreach ( $collection->getItems() as $region ) {
-            $regions[$region->getCode()] = $region->getRegionId();
-        }
-        return $this->jsonSerializer->serialize($regions);
-    }
-
-    public function getValidateUrl()
-    {
-        return $this->_urlBuilder->getUrl('smartystreets/ajax/validate');
+        $config = $this->configProvider->getConfig();
+        return $this->jsonSerializer->serialize($config);
     }
 
 }

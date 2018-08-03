@@ -18,7 +18,7 @@ If you **don't** have Pyxl_Core installed already run this first:
 Then require this package:
 
     composer config repositories.pyxl-smartystreets git https://github.com/thinkpyxl/magento2-Pyxl_SmartyStreets.git
-    composer require pyxl/module-smartystreets:^1.0.3
+    composer require pyxl/module-smartystreets:^1.0.4
     bin/magento module:enable Pyxl_SmartyStreets
     bin/magento setup:upgrade
     bin/magento cache:clean 
@@ -39,7 +39,9 @@ SmartyStreets Javascript SDK Documentation can be found [here](https://smartystr
 
 ## TODO
 * Implement International capabilities for autocomplete
-* Provide better handling and user experience if more than one candidate is returned in back-end validation.  
+* Provide better handling and user experience if more than one candidate is returned in back-end validation.
+* Include billing address form on checkout in autocomplete component
+* Refactor some of the code to clean up duplicate efforts  
 
 ## Authors
 * Joel Rainwater

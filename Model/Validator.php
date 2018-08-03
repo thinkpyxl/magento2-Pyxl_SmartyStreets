@@ -26,6 +26,8 @@ use SmartyStreets\PhpSdk\International_Street\LookupFactory as IntLookupFactory;
 class Validator
 {
 
+    //region Properties
+
     /**
      * @var \Pyxl\SmartyStreets\Helper\Config
      */
@@ -50,6 +52,8 @@ class Validator
      * @var LoggerInterface
      */
     private $logger;
+
+    //endregion
 
     /**
      * Validator constructor.
