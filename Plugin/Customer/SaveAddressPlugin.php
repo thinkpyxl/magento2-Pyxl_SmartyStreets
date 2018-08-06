@@ -95,7 +95,7 @@ class SaveAddressPlugin
                     $street[0] = $firstCandidate->getDeliveryLine1();
                     $street[1] = $firstCandidate->getDeliveryLine2();
                     $components = $firstCandidate->getComponents();
-                    $address->setPostcode($components->getZipcode());
+                    $address->setPostcode($components->getZipcode() . '-' . $components->getPlus4Code());
                     $address->setCity($components->getCityName());
                     if ($address->getRegion()->getRegionCode() !== $components->getStateAbbreviation()) {
                         $this->setRegion($components->getStateAbbreviation(), $address);

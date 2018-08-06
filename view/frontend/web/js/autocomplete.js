@@ -179,7 +179,7 @@ define(
                             if (components.state in self.configData.regions) {
                                 $('#'+self.addressFields.region_id).val(self.configData.regions[components.state]);
                             }
-                            $('#'+self.addressFields.postcode).val(components.zipCode);
+                            $('#'+self.addressFields.postcode).val(components.zipCode+'-'+components.plus4Code);
                         }
                     });
 
