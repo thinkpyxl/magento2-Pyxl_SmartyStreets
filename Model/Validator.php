@@ -15,13 +15,11 @@
 
 namespace Pyxl\SmartyStreets\Model;
 
-use Psr\Log\LoggerInterface;
-use Pyxl\SmartyStreets\Helper\Config;
 use SmartyStreets\PhpSdk\Exceptions\SmartyException;
-use SmartyStreets\PhpSdk\StaticCredentialsFactory;
-use SmartyStreets\PhpSdk\ClientBuilderFactory;
-use SmartyStreets\PhpSdk\US_Street\LookupFactory as UsLookupFactory;
-use SmartyStreets\PhpSdk\International_Street\LookupFactory as IntLookupFactory;
+use SmartyStreets\PhpSdk\StaticCredentials;
+use SmartyStreets\PhpSdk\ClientBuilder;
+use SmartyStreets\PhpSdk\US_Street\Lookup as UsLookup;
+use SmartyStreets\PhpSdk\International_Street\Lookup as IntLookup;
 
 class Validator
 {
@@ -32,24 +30,9 @@ class Validator
      * @var \Pyxl\SmartyStreets\Helper\Config
      */
     private $config;
+
     /**
-     * @var \SmartyStreets\PhpSdk\StaticCredentialsFactory
-     */
-    private $staticCredentialsFactory;
-    /**
-     * @var \SmartyStreets\PhpSdk\ClientBuilderFactory
-     */
-    private $clientBuilderFactory;
-    /**
-     * @var \SmartyStreets\PhpSdk\US_Street\LookupFactory
-     */
-    private $usStreetLookupFactory;
-    /**
-     * @var \SmartyStreets\PhpSdk\International_Street\LookupFactory
-     */
-    private $intStreetFactory;
-    /**
-     * @var LoggerInterface
+     * @var \Psr\Log\LoggerInterface
      */
     private $logger;
 
@@ -58,27 +41,15 @@ class Validator
     /**
      * Validator constructor.
      *
-     * @param Config $config
-     * @param StaticCredentialsFactory $staticCredentialsFactory
-     * @param ClientBuilderFactory $clientBuilderFactory
-     * @param UsLookupFactory $usStreetLookupFactory
-     * @param IntLookupFactory $intStreetFactory
-     * @param LoggerInterface $logger
+     * @param \Pyxl\SmartyStreets\Helper\Config $config
+     * @param \Psr\Log\LoggerInterface $logger
      */
     public function __construct(
-        Config $config,
-        StaticCredentialsFactory $staticCredentialsFactory,
-        ClientBuilderFactory $clientBuilderFactory,
-        UsLookupFactory $usStreetLookupFactory,
-        IntLookupFactory $intStreetFactory,
-        LoggerInterface $logger
+        \Pyxl\SmartyStreets\Helper\Config $config,
+        \Psr\Log\LoggerInterface $logger
     )
     {
         $this->config = $config;
-        $this->staticCredentialsFactory = $staticCredentialsFactory;
-        $this->clientBuilderFactory = $clientBuilderFactory;
-        $this->usStreetLookupFactory = $usStreetLookupFactory;
-        $this->intStreetFactory = $intStreetFactory;
         $this->logger = $logger;
     }
 
@@ -97,16 +68,13 @@ class Validator
             'candidates' => []
         ];
 
-        /** @var \SmartyStreets\PhpSdk\ClientBuilder $client */
-        $client = $this->clientBuilderFactory->create(
-            ['signer' => $this->getCredentials()]
-        );
+        $client = new ClientBuilder($this->getCredentials());
+
         // Build different client and lookup for US vs International
         $street = $address->getStreet();
         if ($address->getCountryId() === "US") {
             $client = $client->buildUsStreetApiClient();
-            /** @var \SmartyStreets\PhpSdk\US_Street\Lookup $lookup */
-            $lookup = $this->usStreetLookupFactory->create();
+            $lookup = new UsLookup();
             if ($street && !empty($street)) {
                 $lookup->setStreet($street[0]);
                 $lookup->setSecondary((count($street)>1) ? $street[1] : null);
@@ -118,8 +86,7 @@ class Validator
             $lookup->setZipcode($address->getPostcode());
         } else {
             $client = $client->buildInternationalStreetApiClient();
-            /** @var \SmartyStreets\PhpSdk\International_Street\Lookup $lookup */
-            $lookup = $this->intStreetFactory->create();
+            $lookup = new IntLookup();
             if ($street && !empty($street)) {
                 $lookup->setAddress1($street[0]);
                 $lookup->setAddress2((count($street)>1) ? $street[1] : null);
@@ -165,12 +132,9 @@ class Validator
      */
     private function getCredentials()
     {
-        /** @var \SmartyStreets\PhpSdk\StaticCredentials $staticCredentials */
-        $staticCredentials = $this->staticCredentialsFactory->create(
-            [
-                'authId' => $this->config->getAuthId(),
-                'authToken' => $this->config->getAuthToken()
-            ]
+        $staticCredentials = new StaticCredentials(
+            $this->config->getAuthId(),
+            $this->config->getAuthToken()
         );
         return $staticCredentials;
     }

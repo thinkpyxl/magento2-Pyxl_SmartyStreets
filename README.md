@@ -18,7 +18,7 @@ If you **don't** have Pyxl_Core installed already run this first:
 Then require this package:
 
     composer config repositories.pyxl-smartystreets git https://github.com/thinkpyxl/magento2-Pyxl_SmartyStreets.git
-    composer require pyxl/module-smartystreets:^1.0.5
+    composer require pyxl/module-smartystreets:^1.0.6
     bin/magento module:enable Pyxl_SmartyStreets
     bin/magento setup:upgrade
     bin/magento cache:clean 
