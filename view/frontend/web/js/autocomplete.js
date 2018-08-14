@@ -23,7 +23,8 @@ define(
                 'city': 'city',
                 'region': 'region',
                 'region_id': 'region_id',
-                'postcode': 'zip'
+                'postcode': 'zip',
+                'county': 'county'
             },
 
             initialize: function () {
@@ -180,6 +181,10 @@ define(
                                 $('#'+self.addressFields.region_id).val(self.configData.regions[components.state]);
                             }
                             $('#'+self.addressFields.postcode).val(components.zipCode+'-'+components.plus4Code);
+                            let metaData = result.metadata;
+                            if (metaData && metaData.hasOwnProperty('countyName')) {
+                                $('#'+self.addressFields.county).val(metaData.countyName);
+                            }
                         }
                     });
 

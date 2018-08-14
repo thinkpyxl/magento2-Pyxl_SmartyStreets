@@ -100,6 +100,10 @@ class SaveAddressPlugin
                     if ($address->getRegion()->getRegionCode() !== $components->getStateAbbreviation()) {
                         $this->setRegion($components->getStateAbbreviation(), $address);
                     }
+                    $metaData = $firstCandidate->getMetadata();
+                    if ($county = $metaData->getCountyName()) {
+                        $address->setCustomAttribute('county', $county);
+                    }
                 } else {
                     /** @var \SmartyStreets\PhpSdk\International_Street\Candidate $firstCandidate */
                     $street[0] = $firstCandidate->getAddress1();
