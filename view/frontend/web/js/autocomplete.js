@@ -171,20 +171,24 @@ define(
                 function handleSuccess(response) {
                     response.lookups.map(function(lookup, index) {
                         if (lookup.result.length > 0) {
+                            $('#autocomplete-error').remove();
                             let result = lookup.result[0];
                             let components = result.components;
-                            $('#'+self.addressFields.street1).val(result.deliveryLine1);
-                            $('#'+self.addressFields.street2).val(result.deliveryLine2);
-                            $('#'+self.addressFields.city).val(components.cityName);
-                            $('#'+self.addressFields.state).val(components.state);
+                            $('#'+self.addressFields.street1).val(result.deliveryLine1).change();
+                            $('#'+self.addressFields.street2).val(result.deliveryLine2).change();
+                            $('#'+self.addressFields.city).val(components.cityName).change();
+                            $('#'+self.addressFields.state).val(components.state).change();
                             if (components.state in self.configData.regions) {
-                                $('#'+self.addressFields.region_id).val(self.configData.regions[components.state]);
+                                $('#'+self.addressFields.region_id).val(self.configData.regions[components.state]).change();
                             }
-                            $('#'+self.addressFields.postcode).val(components.zipCode+'-'+components.plus4Code);
+                            $('#'+self.addressFields.postcode).val(components.zipCode+'-'+components.plus4Code).change();
                             let metaData = result.metadata;
                             if (metaData && metaData.hasOwnProperty('countyName')) {
-                                $('#'+self.addressFields.county).val(metaData.countyName);
+                                $('#'+self.addressFields.county).val(metaData.countyName).change();
                             }
+                        } else {
+                            $('#'+self.addressFields.street1).val(address).change();
+                            $('<div id="autocomplete-error" generated="true" class="mage-error">Your address could not be validated at this time. Please contact a sales representative for additional assistance.</div>').insertAfter('#'+self.addressFields.street1);
                         }
                     });
 
