@@ -70,7 +70,9 @@ class AutocompleteConfigProvider implements ConfigProviderInterface
         $regions = [];
         /** @var \Magento\Directory\Model\Region $region */
         foreach ( $collection->getItems() as $region ) {
-            $regions[$region->getCode()] = $region->getRegionId();
+            if($region->getCountryId() == 'US') {
+                $regions[$region->getCode()] = $region->getRegionId();
+            }
         }
         return $regions;
     }
