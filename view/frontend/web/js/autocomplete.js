@@ -170,8 +170,8 @@ define(
                  */
                 function handleSuccess(response) {
                     response.lookups.map(function(lookup, index) {
+                        $('#autocomplete-error').remove();
                         if (lookup.result.length > 0) {
-                            $('#autocomplete-error').remove();
                             let result = lookup.result[0];
                             let components = result.components;
                             $('#'+self.addressFields.street1).val(result.deliveryLine1).change();
