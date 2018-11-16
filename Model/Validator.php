@@ -107,7 +107,7 @@ class Validator
             // if no results it means address is not valid.
             if (empty($result)) {
                 $response['message'] = __(
-                    'Your address could not be validated. Please try to enter a valid address. If you continue to experience issues, please contact <a href="mailto:ecommsupport@curvature.com">eCommSupport@Curvature.com</a>'
+                    'Your address could not be validated. Please try to enter a valid address. If you continue to experience issues, please contact <a href="mailto:ecommsales@curvature.com">eCommSales@Curvature.com</a>'
                 );
             } else {
                 $response['valid'] = true;

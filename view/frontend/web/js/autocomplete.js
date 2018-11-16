@@ -188,7 +188,7 @@ define(
                             }
                         } else {
                             $('#'+self.addressFields.street1).val(address).change();
-                            $('<div id="autocomplete-error" generated="true" class="mage-error">Your address could not be validated. Please try to enter a valid address. If you continue to experience issues, please contact <a href="mailto:ecommsupport@curvature.com">eCommSupport@Curvature.com</a>. </div>').insertAfter('#'+self.addressFields.street1);
+                            $('<div id="autocomplete-error" generated="true" class="mage-error">Your address could not be validated. Please try to enter a valid address. If you continue to experience issues, please contact <a href="mailto:ecommsales@curvature.com">eCommSales@Curvature.com</a>. </div>').insertAfter('#'+self.addressFields.street1);
                         }
                     });
 
